@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
-    "module": "commonJs",
-    "noImplicitAny": true,
-    "removeComments": true,
-    "preserveConstEnums": true,
-    "outFile": "./dist",
-    "sourceMap": true,
-    "esModuleInterop":true
-  },
-  "include": ["src/**/*"],
-  "exclude": ["**/*.spec.ts"]
+    "target": "ES2020",
+    "module": "CommonJS",
+    "rootDir": "src",
+    "outDir": "dist",
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
+  }
 }
+
