@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "module": "commonJs",
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "outFile": "./dist",
+    "sourceMap": true,
+    "esModuleInterop":true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["**/*.spec.ts"]
+}
