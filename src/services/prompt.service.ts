@@ -24,7 +24,7 @@ export function buildPrompt(
   const included: Passage[] = [];
 
   for (const passage of passages) {
-    const section = `=== PASSAGE id:${passage.id} ===
+    const section = `=== PASSAGE ===
     Title: ${passage.metadata?.title ?? "N/A"}
     URL: ${passage.metadata?.sourceUrl ?? "N/A"}
     ${passage.text}\n\n`;

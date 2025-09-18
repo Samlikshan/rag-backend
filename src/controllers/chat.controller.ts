@@ -32,6 +32,7 @@ export const queryChat = async (
   try {
     const { sessionId, query } = req.body;
 
+    console.log(sessionId, query);
     if (!sessionId) {
       throw new AppError("Session Id is required", 400);
     }
@@ -68,9 +69,7 @@ export const queryChat = async (
       };
     });
 
-    console.log(passages, "passages");
     const { prompt } = buildPrompt(query, passages);
-    console.log(prompt, "prompts");
     const answer = await callGeminiNonStreaming(prompt);
 
     await sessionService.addMessage(sessionId, "assistant", answer);
@@ -92,7 +91,7 @@ export const getHistory = async (
   try {
     const { sessionId } = req.params;
 
-    if (!sessionId) {
+    if (!sessionId || sessionId == "false" || sessionId == "undefined") {
       throw new AppError("Session Id is required", 400);
     }
 
@@ -112,7 +111,7 @@ export const resetSession = async (
   try {
     const { sessionId } = req.params;
 
-    if (!sessionId) {
+    if (!sessionId || sessionId == "false" || sessionId == "undefined") {
       throw new AppError("Session Id is required", 400);
     }
 

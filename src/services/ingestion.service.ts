@@ -24,7 +24,7 @@ export class IngestionService {
   async run() {
     // 1. collect article urls
     console.log("Fetching feed URLs...");
-    const allUrls: string[] = [];
+    const allUrls: { url: string; lastmod?: string }[] = [];
     for (const feed of DEFAULT_FEEDS) {
       try {
         const urls = await fetchFeedUrls(feed, MAX_ARTICLES);
@@ -35,20 +35,22 @@ export class IngestionService {
       if (allUrls.length >= MAX_ARTICLES) break;
     }
 
-    const uniqueUrls = Array.from(new Set(allUrls)).slice(0, MAX_ARTICLES);
+    const uniqueUrls = Array.from(
+      new Map(allUrls.map((a) => [a.url, a])).values(),
+    ).slice(0, MAX_ARTICLES);
+
     console.log(`Found ${uniqueUrls.length} URLs to fetch.`);
 
     // 2. fetch articles
     const articles = [];
-    for (const url of uniqueUrls) {
+    for (const { url, lastmod } of uniqueUrls) {
       try {
-        const art = await fetchArticle(url);
+        const art = await fetchArticle(url, lastmod);
         if (art) articles.push(art);
       } catch (err) {
         console.warn(`Skipping ${url} due to error: ${(err as Error).message}`);
       }
     }
-    console.log(articles);
     console.log(`Fetched ${articles.length} articles with usable text.`);
 
     // 3. chunk articles
@@ -72,7 +74,6 @@ export class IngestionService {
     }
 
     // 4. embed in batches
-    // create points: id, vector, payload
     const points: {
       id: string;
       vector: number[];
@@ -82,11 +83,12 @@ export class IngestionService {
       const batch = chunks.slice(i, i + EMBED_BATCH_SIZE);
       const texts = batch.map((c) => c.text);
       console.log(
-        `Embedding batch ${i / EMBED_BATCH_SIZE + 1}/${Math.ceil(chunks.length / EMBED_BATCH_SIZE)}`,
+        `Embedding batch ${i / EMBED_BATCH_SIZE + 1}/${Math.ceil(
+          chunks.length / EMBED_BATCH_SIZE,
+        )}`,
       );
       const vectors = await embedTexts(texts, "retrieval.passage");
 
-      // first ingestion: ensure collection exists with vector size
       if (i === 0 && vectors.length > 0) {
         await this.qdrant.ensureCollection(vectors[0].length);
       }

@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import morgan from "morgan";
 import { errorHandler } from "./middleware/errorHandler";
+
 dotenv.config();
 
 import routes from "./routes/index";
