@@ -75,8 +75,8 @@ export const queryChat = async (
 
     await sessionService.addMessage(sessionId, "assistant", answer);
 
-    const history = await sessionService.getSessionHistory(sessionId);
-    res.json({ sessionId, history });
+    //const history = await sessionService.getSessionHistory(sessionId);
+    res.json({ sessionId, response: answer });
   } catch (error) {
     console.log(error, "error");
     logger.error(`queryChat failed: ${(error as Error).message}`);
